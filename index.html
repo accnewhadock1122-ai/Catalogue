@@ -1,8 +1,8 @@
-
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DRK CATALOGUE CREATE WEBSITE</title>
   <style>
     body {
@@ -12,117 +12,153 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: #ffffff;
       text-align: center;
-    }h1 {
-  margin-top: 40px;
-  font-size: 2.5em;
-  background: linear-gradient(to right, #00c6ff, #0072ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+    }
 
-p.creator {
-  font-size: 1.2em;
-  color: #ccccff;
-  margin-bottom: 40px;
-}
+    h1 {
+      margin-top: 40px;
+      font-size: 2.5em;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-.upload-section {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 30px;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 500px;
-  margin: auto;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-}
+    p.creator {
+      font-size: 1.2em;
+      color: #ccccff;
+      margin-bottom: 40px;
+    }
 
-input[type="file"] {
-  display: none;
-}
+    .upload-section {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
 
-.custom-upload {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 10px;
-  font-size: 1em;
-  background: linear-gradient(to right, #8e2de2, #4a00e0);
-  color: white;
-  cursor: pointer;
-  margin-bottom: 20px;
-  display: inline-block;
-}
+    input[type="file"] {
+      display: none;
+    }
 
-button {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 10px;
-  font-size: 1em;
-  background: linear-gradient(to right, #1e90ff, #00bfff);
-  color: white;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
+    .custom-upload {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      background: linear-gradient(to right, #8e2de2, #4a00e0);
+      color: white;
+      cursor: pointer;
+      margin-bottom: 20px;
+      display: inline-block;
+    }
 
-button:hover, .custom-upload:hover {
-  transform: scale(1.05);
-}
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      background: linear-gradient(to right, #1e90ff, #00bfff);
+      color: white;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
 
+    button:hover, .custom-upload:hover {
+      transform: scale(1.05);
+    }
+
+    #previewImage {
+      max-width: 100%;
+      margin-top: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    }
   </style>
 </head>
 <body>
   <h1>DRK CATALOGUE CREATE WEBSITE</h1>
-  <p class="creator">Create By : Drk Owner Ash</p>  <div class="upload-section">
+  <p class="creator">Create By : Drk Owner Ash</p>
+
+  <div class="upload-section">
     <label for="imageInput" class="custom-upload">Upload Photo</label>
     <input type="file" id="imageInput" accept="image/*" />
     <br />
     <button onclick="createCatalogue()">Create Catalogue</button>
-  </div>  <script>
+    <div id="previewContainer"></div>
+  </div>
+
+  <script>
+    let uploadedImage = null;
+
+    document.getElementById('imageInput').addEventListener('change', function () {
+      const file = this.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = new Image();
+        img.onload = function () {
+          uploadedImage = img;
+
+          // Show Preview
+          const previewContainer = document.getElementById('previewContainer');
+          previewContainer.innerHTML = ""; // clear old preview if any
+
+          const previewImg = document.createElement('img');
+          previewImg.id = 'previewImage';
+          previewImg.src = img.src;
+          previewContainer.appendChild(previewImg);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
     function createCatalogue() {
-      const fileInput = document.getElementById('imageInput');
-      if (!fileInput.files.length) {
+      if (!uploadedImage) {
         alert('Please upload an image first.');
         return;
       }
 
-      const file = fileInput.files[0];
-      const img = new Image();
-      const reader = new FileReader();
+      const img = uploadedImage;
 
-      reader.onload = function(e) {
-        img.onload = function() {
-          const size = Math.min(img.width, img.height);
-          const partSize = Math.floor(size / 3);
+      const size = Math.min(img.width, img.height);
+      const startX = (img.width - size) / 2;
+      const startY = (img.height - size) / 2;
+      const partSize = Math.floor(size / 3);
+
+      for (let i = 0; i < 2; i++) {
+        for (let j = 0; j < 3; j++) {
           const canvas = document.createElement('canvas');
           canvas.width = partSize;
           canvas.height = partSize;
           const ctx = canvas.getContext('2d');
 
-          for (let i = 0; i < 2; i++) {
-            for (let j = 0; j < 3; j++) {
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-              ctx.drawImage(
-                img,
-                j * partSize,
-                i * partSize,
-                partSize,
-                partSize,
-                0,
-                0,
-                partSize,
-                partSize
-              );
-              canvas.toBlob((blob) => {
-                const link = document.createElement('a');
-                link.download = `catalogue_part_${i * 3 + j + 1}.png`;
-                link.href = URL.createObjectURL(blob);
-                link.click();
-              }, 'image/png');
-            }
-          }
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+          ctx.drawImage(
+            img,
+            startX + j * partSize,
+            startY + i * partSize,
+            partSize,
+            partSize,
+            0,
+            0,
+            partSize,
+            partSize
+          );
+
+          canvas.toBlob((blob) => {
+            const link = document.createElement('a');
+            link.download = `catalogue_part_${i * 3 + j + 1}.png`;
+            link.href = URL.createObjectURL(blob);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }, 'image/png');
+        }
+      }
     }
-  </script></body>
+  </script>
+</body>
   </html>
